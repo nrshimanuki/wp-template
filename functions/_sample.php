@@ -1,15 +1,22 @@
 <?php
 
-/**
- * カレンダーの予約投稿機能を無効にする
- */
-// function stop_post_status_future_func($data, $postarr) {
-// 	if (($data['post_type'] == 'calendar' && $data['post_status'] == 'future') && $postarr['post_status'] == 'publish') {
-// 		$data['post_status'] = 'publish';
-// 	}
-// 	return $data;
-// };
-// add_filter( 'wp_insert_post_data', 'stop_post_status_future_func', 10, 2 );
+/* Note ===================================
+
+--- 特定の投稿数が表示された時に何かをしたい
+$wp_query->current_post
+
+
+--- アイキャッチ画像のURLだけ取得
+
+wp_get_attachment_image_src()
+登録したアイキャッチ画像のパスやサイズを配列で返してくれる。
+
+get_post_thumbnail_id()
+アイキャッチ画像のIDを取得
+
+
+
+======================================== */
 
 
 
@@ -96,7 +103,6 @@ function breadcrumbs_list() {
 
 
 
-
 /** ========================================
  * アーカイブの余計なタイトルを削除
  */
@@ -119,6 +125,19 @@ add_filter('get_the_archive_title', function ($title) {
 	}
 	return $title;
 });
+
+
+
+
+/** ========================================
+ * カスタムクエリ変数追加 (URLクエリ文字列を独自に定義する)
+ */
+function add_query_vars_filter( $vars ) {
+	$vars[] = "calendar_year";
+	$vars[] = "calendar_month";
+	return $vars;
+}
+add_filter( 'query_vars', 'add_query_vars_filter' );
 
 
 
@@ -520,15 +539,3 @@ function get_cpt_calendar_next($cpt, $initial = true, $echo = true) {
 		return apply_filters( 'get_calendar',  $calendar_output );
 
 }
-
-
-
-/** ========================================
- * カスタムクエリ変数追加
- */
-function add_query_vars_filter( $vars ) {
-	$vars[] = "calendar_year";
-	$vars[] = "calendar_month";
-	return $vars;
-}
-add_filter( 'query_vars', 'add_query_vars_filter' );
